@@ -3,32 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Gráficos del Dataset Iris</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: auto;
-            padding: 2rem;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        h1, h2 {
-            color: #2c3e50;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 2rem;
-            border: 1px solid #ccc;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        canvas { max-width: 800px; }
     </style>
 </head>
 <body>
     <h1>Gráficos del Dataset Iris</h1>
     <h2>Sepal Length vs Sepal Width</h2>
-    <img src="sepal_plot.png" alt="Gráfico de sépalos">
-    <h2>Pairplot de todas las variables</h2>
-    <img src="pairplot.png" alt="Pairplot del dataset Iris">
+    <canvas id="sepalChart"></canvas>
+
+    <script>
+        // Cargar datos desde data.json
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => {
+                // Preparar datos para el gráfico
+                const labels = data.map(item => item.target_names);
+                const sepalLengths = data.map(item => item.sepal_length);
+                const sepalWidths = data.map(item => item.sepal_width);
+
+                // Configurar el gráfico
+                const ctx = document.getElementById('sepalChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Sepal Length vs Width',
+                            data: data.map((item, index) => ({ x: sepalLengths[index], y: sepalWidths[index] })),
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Sepal Length (cm)' } },
+                            y: { title: { display: true, text: 'Sepal Width (cm)' } }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
+    </script>
 </body>
 </html>
