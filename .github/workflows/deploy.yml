@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        persist-credentials: false  # Necesario para usar set-url con GITHUB_TOKEN
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -29,10 +31,14 @@ jobs:
         ES_API_KEY: ${{ secrets.ES_API_KEY }}
       run: python create_index.py
 
-    - name: Commit and push changes to docs
+    - name: Set up Git credentials
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+
+    - name: Commit and push changes to docs
+      run: |
         git add docs/*
         git commit -m "Update plots in docs folder" || echo "No changes to commit"
         git push
