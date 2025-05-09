@@ -1,13 +1,22 @@
+import os
 from elasticsearch import Elasticsearch
 import pandas as pd
 from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
+
+# Configuración de la conexión desde variables de entorno
+es_endpoint = os.getenv("ES_ENDPOINT", "https://my-elasticsearch-project-c267e7.es.us-east-1.aws.elastic.cloud:443")  # Valor por defecto
+es_api_key = os.getenv("ES_API_KEY", "d1NaWHNwWUJIbEJDY3RlR0htS2M6ZDFYX0R3VFFsNVoxc1JnM0lMTXBLQQ==")  # Valor por defecto
+
+# Validar que las variables no sean None
+if not es_endpoint or not es_api_key:
+    print("Error: Las variables de entorno ES_ENDPOINT y ES_API_KEY deben estar definidas")
+    exit()
 
 client = Elasticsearch(
-    "https://my-elasticsearch-project-c267e7.es.us-east-1.aws.elastic.cloud:443",
-    api_key="d1NaWHNwWUJIbEJDY3RlR0htS2M6ZDFYX0R3VFFsNVoxc1JnM0lMTXBLQQ=="
+    es_endpoint,
+    api_key=es_api_key
 )
 
 # Verificar la conexión
